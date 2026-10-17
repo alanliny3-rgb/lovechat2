@@ -1,0 +1,201 @@
+:root{
+  --bg:#f5f7fb; --card:#fff; --accent:#2b9cff; --muted:#6b7280; --radius:12px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,system-ui;background:var(--bg);color:#111}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.06);padding:12px}
+.login-card{max-width:420px;margin:48px auto;padding:18px}
+.login-card input{width:100%;margin:8px 0;padding:10px;border-radius:8px;border:1px solid #e6eef8}
+.row{display:flex;gap:8px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:12px;cursor:pointer;transition:0.2s;box-shadow:0 2px 8px rgba(43,156,255,0.22)}
+.btn:hover{opacity:0.85}
+.btn.small{padding:6px 8px;font-size:13px}
+.btn.outline{background:white;border:1px solid #e6eef8;color:var(--accent);box-shadow:none}
+.small{font-size:12px;color:var(--muted)}
+.muted{color:var(--muted)}
+.app{max-width:480px;margin:0 auto;background:transparent;min-height:100vh;padding-bottom:72px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px}
+.me-name{font-weight:700}
+.main{padding:8px;}
+.view{display:none}
+.view.active{display:block}
+.chat-header{display:flex;justify-content:space-between;align-items:center;padding:8px 0;flex-shrink:0}
+.chat-window{flex:1;min-height:0;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
+.composer{display:flex; flex-direction: column;gap:8px;padding:8px 0}
+.composer input{flex:1;padding:10px;border-radius:10px;border:1px solid #e6eef8}
+.list{max-height:36vh;overflow:auto}
+.panel{background:var(--card);border-radius:12px;padding:10px;margin-bottom:10px;border:1px solid #e9eef5}
+.pad{padding:12px}
+.profile-row{display:flex;gap:8px;align-items:center}
+.avatar-wrap{width:52px;height:52px;border-radius:50%;overflow:hidden;background:#e2e8f0;display:flex;align-items:center;justify-content:center}
+.avatar-wrap img{width:100%;height:100%;object-fit:cover}
+.avatar-initial{font-weight:600;color:#334155;display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:18px}
+.friend{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;cursor:pointer}
+.friend:hover{background:#f2f6fb}
+.unread{background:#ff4d6d;color:white;border-radius:12px;padding:2px 8px;font-size:12px}
+.bubble{display:inline-block;padding:10px 14px;border-radius:16px;max-width:100%;line-height:1.2; white-space: pre-wrap;  word-break: break-word;}
+.bubble.me{background:#d2f0ff;margin-left:auto;border-bottom-right-radius:4px}
+.bubble.you{background:#f1f3f5;margin-right:auto;border-bottom-left-radius:4px}
+.msg-time{position:absolute;top:100%;left:0;margin-top:3px;font-size:11px;color:#9aa3ad;text-align:left;white-space:nowrap;pointer-events:none}
+.msg-right .msg-time{left:auto;right:0;text-align:right}
+.msg-row{display:flex;align-items:center;gap:8px;padding-bottom:14px}
+.msg-right{justify-content:flex-end}
+.msg-left{justify-content:flex-start}
+.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:480px;display:flex;justify-content:space-around;padding:8px;background:#fff;border-top:1px solid #eee;border-radius:14px 14px 0 0;box-shadow:0 -4px 16px rgba(15,23,42,0.06)}
+.nav-btn{background:none;border:none;padding:8px;color:var(--muted);font-weight:600}
+.nav-btn.active{color:var(--accent)}
+textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;resize:vertical}
+.title{font-weight:700;margin-bottom:6px}
+.small-muted{font-size:12px;color:var(--muted)}
+
+/* 会话展开时：chatPanel 占满高度，内部用 flex 让聊天窗自适应 */
+.chat-panel-full {
+  display: flex !important;
+  flex-direction: column;
+  height: 85vh;
+}
+
+.composer { flex-shrink: 0; }
+
+.edit-remark-btn {
+  background: #eee;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.edit-remark-btn:hover {
+  background: #ddd;
+}
+
+.composer .image-send input { display: none; }
+
+/* 红点，只在消息列表里显示 */
+#conversationsList .friend {
+  position: relative; /* 给红点提供定位容器 */
+}
+
+#conversationsList .friend .red-dot {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background-color: #ff4d6d;
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  box-sizing: border-box;
+  visibility: hidden; /* 默认隐藏，有未读时由 JS 改为 visible */
+}
+
+#conversationsList {
+  max-height: 90vh; 
+  overflow-y: auto; 
+}
+#friendsList {
+  max-height: 65vh; 
+  overflow-y: auto; 
+}
+#meNote {
+  height: 50vh; 
+}
+
+/* ===== 简约可爱 SVG 图标 ===== */
+.icon{display:inline-block;width:1em;height:1em;flex-shrink:0;vertical-align:-0.125em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.btn .icon{width:15px;height:15px}
+.btn.small .icon{width:14px;height:14px}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;line-height:1;padding:6px 14px}
+.nav-btn .icon{width:22px;height:22px;transition:transform .2s ease}
+.nav-btn:hover .icon{transform:translateY(-1px) scale(1.05)}
+.nav-btn.active .icon{color:var(--accent)}
+.title{display:flex;align-items:center;gap:6px}
+.title .icon{width:17px;height:17px;color:var(--accent)}
+.login-card h2{display:flex;align-items:center;gap:8px}
+.login-card h2 .icon{width:22px;height:22px;color:#ff7ba9}
+.edit-remark-btn{display:inline-flex;align-items:center;gap:3px}
+.edit-remark-btn .icon{width:12px;height:12px}
+
+/* ===== 可爱化细节 ===== */
+.btn:active{transform:scale(0.96)}
+input,textarea{border-radius:12px}
+/* 防止手机端点击输入框时页面自动放大：字号需 ≥16px */
+input,select,textarea{font-size:16px}
+input:not([type=file]),textarea{border:1px solid #e6eef8;background:#fff}
+input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(43,156,255,0.12)}
+.icon-btn{width:42px;padding:8px 10px;border-radius:12px;background:#eef3fb;color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;border:none;transition:0.2s}
+.icon-btn:hover{background:#eef3fb}
+.icon-btn.active{background:#dce8f7}
+.icon-btn .icon{width:18px;height:18px}
+.nav-btn:hover .icon{animation:iconBounce .5s ease}
+@keyframes iconBounce{0%,100%{transform:translateY(0)}35%{transform:translateY(-3px) scale(1.08)}70%{transform:translateY(0) scale(1.03)}}
+.login-card h2 .icon{animation:heartBeat 2.2s ease-in-out infinite}
+@keyframes heartBeat{0%,100%{transform:scale(1)}12%{transform:scale(1.15)}24%{transform:scale(1)}}
+
+/* 消息列：时间放在气泡外面（气泡下方） */
+.msg-col{display:flex;flex-direction:column;max-width:78%}
+.msg-left .msg-col{align-items:flex-start}
+.msg-right .msg-col{align-items:flex-end}
+.msg-col .bubble{max-width:100%}
+
+/* 输入区：⊕ 点击后"发送图片"按钮在发送按钮同一行，从右侧滑出 */
+.composer .image-send{
+  margin:0;padding:0;max-width:0;opacity:0;overflow:hidden;
+  transform:translateX(18px);flex-shrink:0;
+  transition:max-width .22s ease,opacity .18s ease,transform .22s ease;
+}
+.composer .image-send.open{max-width:150px;opacity:1;transform:translateX(0)}
+.composer .image-send .btn{margin:0;white-space:nowrap}
+
+/* ===== Toast 提示 ===== */
+#toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:rgba(17,24,39,.92);color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;transform:translateY(-8px);transition:opacity .25s,transform .25s;max-width:80vw}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-success{background:rgba(22,163,74,.92)}
+.toast-error{background:rgba(220,38,38,.92)}
+
+/* ===== 消息发送中状态 ===== */
+.msg-sending .bubble{opacity:.65}
+.msg-failed .bubble{border:1.5px solid #ef4444;color:#ef4444;opacity:.85}
+.msg-failed .msg-time{color:#ef4444}
+.msg-spinner{position:absolute;top:100%;right:0;width:14px;height:14px;border:2px solid #cbd5e1;border-top-color:var(--accent);border-radius:50%;margin-top:4px;animation:spin .8s linear infinite}
+/* 转圈只在"发送中"的行显示，收到回执后立即隐藏，避免一直转 */
+.msg-row .msg-spinner{display:none}
+.msg-row.msg-sending .msg-spinner{display:block}
+.msg-left .msg-spinner{right:auto;left:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== 消息气泡复制按钮（hover 显示） ===== */
+.msg-col{position:relative}
+.msg-copy-btn{position:absolute;top:-6px;opacity:0;background:#fff;border:1px solid #e6eef8;border-radius:6px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);padding:0;transition:opacity .15s;z-index:2}
+.msg-right .msg-copy-btn{right:0}
+.msg-left .msg-copy-btn{left:0}
+.msg-col:hover .msg-copy-btn{opacity:1}
+.msg-copy-btn:hover{background:#f2f6fb;color:var(--accent)}
+
+/* ===== 消息日期分隔条 ===== */
+.msg-date-sep{text-align:center;font-size:11px;color:#a7b0ba;margin:12px 0 4px}
+.msg-date-sep:first-child{margin-top:0}
+
+/* ===== 空会话提示 ===== */
+.msg-empty-hint{text-align:center;color:#c0c7cf;font-size:13px;margin-top:35vh}
+
+/* ===== 会话列表：最后消息 + 时间 ===== */
+.conv-preview{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.conv-preview-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.conv-preview-time{font-size:11px;color:#c0c7cf;flex-shrink:0}
+
+/* ===== 底部导航未读角标 ===== */
+.nav-btn{position:relative}
+.nav-badge{position:absolute;top:2px;right:calc(50% - 24px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#ff4d6d;color:#fff;font-size:10px;line-height:16px;text-align:center;box-sizing:border-box;display:none}
+
+/* ===== 新消息淡入 + 细滚动条 ===== */
+.msg-row{animation:msgIn .18s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:#d3dae3;border-radius:3px}
+::-webkit-scrollbar-track{background:transparent}

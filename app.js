@@ -549,7 +549,8 @@
 
     if (!currentUser) return;
     // 服务端未读清零（等价于旧 socket 'open-conversation'）
-    if (supabase) supabase.rpc('open_conversation', { p_user: currentUser, p_friend: friend }).catch(()=>{});
+    // 注意：supabase.rpc() 返回的是 thenable（只有 .then 没有 .catch），直接用 .catch 会抛 TypeError 导致聊天窗口打不开
+    if (supabase) supabase.rpc('open_conversation', { p_user: currentUser, p_friend: friend }).then(()=>{}, ()=>{});
 
     const found = friends.find(x => x.friend === friend);
     const remark = (found && found.remark) || '';

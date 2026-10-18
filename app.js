@@ -107,8 +107,8 @@
   }
 
   // --------------- 标签页图标（favicon）：默认空心爱心，有未读时空心/实心交替闪烁 ---------------
-  const FAV_HOLLOW = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7ba9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3C14.7 3 13.5 3.5 12 5c-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7 7-7z'/%3E%3C/svg%3E";
-  const FAV_SOLID = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff7ba9'%3E%3Cpath d='M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3C14.7 3 13.5 3.5 12 5c-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7 7-7z'/%3E%3C/svg%3E";
+  const FAV_HOLLOW = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3C14.7 3 13.5 3.5 12 5c-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7 7-7z'/%3E%3C/svg%3E";
+  const FAV_SOLID = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23111'%3E%3Cpath d='M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3C14.7 3 13.5 3.5 12 5c-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7 7-7z'/%3E%3C/svg%3E";
   let _favTimer = null;
   let _favSolid = false;
   function setFavicon(solid) {
@@ -960,12 +960,14 @@
   if(btnSendText) btnSendText.addEventListener('click', () => sendMessage(msgInput.value.trim()));
   if(msgInput) msgInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMessage(msgInput.value.trim()); });
 
-  // --------------- 事件绑定：图片选择 & 自动上传 ---------------
+  // --------------- 事件绑定：输入区（点击 + 按钮后才出现输入框） ---------------
   const btnMore = document.getElementById('btnMore');
-  const imageRow = document.getElementById('imageRow');
-  if (btnMore && imageRow) btnMore.addEventListener('click', () => {
-    imageRow.classList.toggle('open');
+  const composerInner = document.querySelector('.composer-inner');
+  if (btnMore && composerInner) btnMore.addEventListener('click', () => {
+    const willOpen = !composerInner.classList.contains('open');
+    composerInner.classList.toggle('open');
     btnMore.classList.toggle('active');
+    if (willOpen && msgInput) setTimeout(() => { try { msgInput.focus(); } catch(e) {} }, 60);
   });
 
   const btnSendImage = document.getElementById('btnSendImage');
@@ -1015,6 +1017,7 @@
   }
 
   if(btnAdd) btnAdd.addEventListener('click', ()=> {
+    if(!currentUser){ toast('请先在「设置」页登录'); return; }
     const t = newFriendInput.value.trim();
     if(!t){ toast('请输入好友用户名'); return; }
     if(!supabaseReady()) return;
@@ -1064,6 +1067,84 @@
     });
   }
 
+  // --------------- 页面背景图（仅本地保存，不上传） ---------------
+  const bgInput = document.getElementById('bgInput');
+  const btnChooseBg = document.getElementById('btnChooseBg');
+  const bgUpload = document.getElementById('bgUpload');
+  const btnSaveBg = document.getElementById('btnSaveBg');
+  const btnRemoveBg = document.getElementById('btnRemoveBg');
+  const bgStatus = document.getElementById('bgStatus');
+
+  function applyPageBg(url) {
+    const has = !!(url && String(url).trim());
+    document.body.classList.toggle('has-page-bg', has);
+    if (has) {
+      const safe = String(url).replace(/["'\\]/g, '');
+      document.body.style.backgroundImage = 'url("' + safe + '")';
+    } else {
+      document.body.style.backgroundImage = '';
+    }
+    if (bgStatus) bgStatus.textContent = has ? '已应用页面背景（仅保存在本机）' : '未设置背景图';
+  }
+  function savePageBg(url) {
+    try {
+      if (url && String(url).trim()) localStorage.setItem('chat_page_bg', String(url).trim());
+      else localStorage.removeItem('chat_page_bg');
+    } catch(e) { toast('保存失败（图片可能过大）', 'error'); return; }
+    applyPageBg(url);
+  }
+  function loadPageBg() {
+    let stored = '';
+    try { stored = localStorage.getItem('chat_page_bg') || ''; } catch(e) {}
+    if (bgInput) bgInput.value = stored;
+    applyPageBg(stored);
+  }
+  function fileToBgDataUrl(file) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onerror = () => resolve(null);
+      img.onerror = () => resolve(null);
+      reader.onload = (e) => { img.src = e.target.result; };
+      img.onload = () => {
+        const MAX_EDGE = 1600;
+        let w = img.width, h = img.height;
+        if (w > MAX_EDGE || h > MAX_EDGE) {
+          const s = Math.min(MAX_EDGE / w, MAX_EDGE / h);
+          w = Math.round(w * s); h = Math.round(h * s);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        try { resolve(canvas.toDataURL('image/jpeg', 0.82)); } catch(e) { resolve(null); }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  if (btnChooseBg && bgUpload) btnChooseBg.addEventListener('click', () => bgUpload.click());
+  if (bgUpload) bgUpload.addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    const dataUrl = await fileToBgDataUrl(file);
+    if (!dataUrl) { toast('背景图处理失败', 'error'); return; }
+    if (bgInput) bgInput.value = dataUrl;
+    savePageBg(dataUrl);
+    toast('背景图已应用', 'success');
+  });
+  if (btnSaveBg) btnSaveBg.addEventListener('click', () => {
+    const v = bgInput ? bgInput.value.trim() : '';
+    if (!v) { toast('请先粘贴外链或选择本地图片', 'error'); return; }
+    savePageBg(v);
+    toast('背景图已应用', 'success');
+  });
+  if (btnRemoveBg) btnRemoveBg.addEventListener('click', () => {
+    if (bgInput) bgInput.value = '';
+    savePageBg('');
+    toast('已移除背景图');
+  });
+  loadPageBg();
+
   // 通知设置：显示当前权限状态，提供手动开启入口
   const btnNotifyToggle = document.getElementById('btnNotifyToggle');
   const notifyStatus = document.getElementById('notifyStatus');
@@ -1101,6 +1182,35 @@
     });
   }
   refreshNotifyStatus();
+
+  // 首次进入网页：弹窗提示开启消息通知（只提示一次）
+  function maybePromptNotify() {
+    if (typeof Notification === 'undefined') return;
+    const p = Notification.permission;
+    if (p === 'granted' || p === 'denied') return;
+    let prompted = false;
+    try { prompted = !!localStorage.getItem('chat_notify_prompted'); } catch(e) {}
+    if (prompted) return;
+    const promptEl = document.getElementById('notifyPrompt');
+    if (!promptEl) return;
+    const yesBtn = document.getElementById('btnNotifyYes');
+    const noBtn = document.getElementById('btnNotifyNo');
+    if (yesBtn) yesBtn.onclick = async () => {
+      promptEl.style.display = 'none';
+      try { localStorage.setItem('chat_notify_prompted', '1'); } catch(e) {}
+      try {
+        const res = await Notification.requestPermission();
+        refreshNotifyStatus();
+        if (res === 'granted') toast('通知已开启', 'success');
+        else if (res === 'denied') toast('浏览器拒绝了通知请求', 'error');
+      } catch(e) {}
+    };
+    if (noBtn) noBtn.onclick = () => {
+      promptEl.style.display = 'none';
+      try { localStorage.setItem('chat_notify_prompted', '1'); } catch(e) {}
+    };
+    setTimeout(() => { promptEl.style.display = 'flex'; }, 800);
+  }
 
   if(btnRegister) btnRegister.addEventListener('click', async () => {
     const u = document.getElementById('li-username').value.trim();
@@ -1174,6 +1284,9 @@
       showLogin();
     }
   })();
+
+  // 首次进入网页时提示开启消息通知（浏览器要求由用户点击触发，用弹窗按钮）
+  maybePromptNotify();
 
   // Logout
   if(btnLogout) btnLogout.addEventListener('click', ()=> {

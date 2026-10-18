@@ -3,27 +3,35 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-<title>アイチャット</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7ba9' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3C14.7 3 13.5 3.5 12 5c-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7 7-7z'/%3E%3C/svg%3E">
+<title>iChat</title>
+<!-- 引入高级无衬线字体 -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23111'%3E%3Cpath d='M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3C14.7 3 13.5 3.5 12 5c-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7 7-7z'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
   <!-- 登录卡 -->
-  <div id="loginView" class="card login-card">
-    <h2><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3C14.7 3 13.5 3.5 12 5c-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7 7-7z"/></svg>登录 / 注册</h2>
-    <input id="li-username" placeholder="用户名" />
-    <input id="li-password" type="password" placeholder="密码" />
-    <!-- 前端仅检查是否填写 后端负责校验有效性 -->
-    <input id="li-code" placeholder="邀请码" value="" />
+  <div id="loginView" class="login-wrapper">
+    <div class="login-card">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <h2>欢迎回来</h2>
+      <p class="subtitle">登录或注册您的 iChat 账号</p>
+      
+      <div class="input-group">
+        <input id="li-username" placeholder="用户名" autocomplete="off" />
+        <input id="li-password" type="password" placeholder="密码" />
+        <input id="li-code" placeholder="邀请码 (仅注册需要)" value="" />
+      </div>
 
-    <div class="row">
-      <button id="btn-register" class="btn">注册</button>
-      <button id="btn-login" class="btn">登录</button>
+      <div class="action-group">
+        <button id="btn-login" class="btn btn-primary">登录</button>
+        <button id="btn-register" class="btn btn-secondary">注册账号</button>
+      </div>
     </div>
-    <p class="note">注册请输入邀请码 设置相较简短的账号密码</p>
   </div>
-
 
   <!-- 主界面 -->
   <div id="app" class="app" style="display:none">
@@ -31,122 +39,126 @@
     <header class="topbar">
       <div class="left">
         <div id="meName" class="me-name">用户名</div>
-        <div id="statusText" class="small muted">已登录</div>
+        <div id="statusText" class="small muted">Online</div>
       </div>
       <div class="right">
-        <button id="btn-logout" class="btn"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 21H6.5A2.5 2.5 0 0 1 4 18.5v-13A2.5 2.5 0 0 1 6.5 3h3"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>登出</button>
+        <button id="btn-logout" class="btn-icon-text">登出</button>
       </div>
     </header>
 
     <main class="main">
       <!-- 消息 tab -->
       <section id="tab-messages" class="tab view active">
-        <div id="conversationsPanel" class="panel pad">
-          <div class="title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4 3v-3H6.5A2.5 2.5 0 0 1 4 14.5v-8z"/><circle cx="9" cy="10.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12.5" cy="10.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="16" cy="10.5" r="0.9" fill="currentColor" stroke="none"/></svg>会话</div>
+        <div id="conversationsPanel" class="panel">
+          <h1 class="page-title">消息</h1>
           <div id="conversationsList" class="list"></div>
         </div>
 
-        <div id="chatPanel" class="panel pad" style="display:none">
-          <div class="chat-header" style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="display:flex;align-items:center;gap:8px">
-              <button id="backToConvos" class="btn small outline" style="padding:6px 6px;gap:2px"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>返回</button>
-              <div>
-                <div id="chatTitle">请选择会话</div>
-                <div id="friendRemarkDisplay" class="small muted"></div>
-              </div>
+        <div id="chatPanel" class="panel chat-panel" style="display:none">
+          <div class="chat-header">
+            <button id="backToConvos" class="btn-back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="chat-title-group">
+              <div id="chatTitle" class="title-main"></div>
+              <div id="friendRemarkDisplay" class="small muted"></div>
             </div>
           </div>
 
           <div id="chatWindow" class="chat-window"></div>
 
-  <div class="composer">
-    <div class="row text-send">
-      <button id="btnMore" class="icon-btn" type="button" title="更多"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></button>
-      <input id="msgInput" placeholder="输入消息并回车发送" />
-      <div id="imageRow" class="row image-send">
-        <button id="btnSendImage" class="btn"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3.5"/><circle cx="9" cy="10" r="1.7"/><path d="M20.5 15.5L16 10.5 6 19.5"/></svg>发送图片</button>
-        <input type="file" id="imgUpload" accept="image/*" />
-      </div>
-      <button id="btnSendText" class="btn"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2.5L11 13.5"/><path d="M22 2.5L15 21.5 11 13.5 2 9.5z"/></svg>发送</button>
-    </div>
-  </div>
+          <div class="composer">
+            <div class="composer-inner">
+              <button id="btnMore" class="btn-circle" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              
+              <div id="imageRow" class="image-send">
+                <button id="btnSendImage" class="btn-attach">图片</button>
+                <input type="file" id="imgUpload" accept="image/*" />
+              </div>
 
+              <input id="msgInput" placeholder="输入消息..." autocomplete="off" />
+              <button id="btnSendText" class="btn-circle primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- 联系人 tab -->
       <section id="tab-contacts" class="tab view">
-        <div class="panel pad">
-          <div class="title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.5" cy="8" r="3"/><path d="M4.2 18.5c.9-2.8 2.9-4.2 5.3-4.2s4.4 1.4 5.3 4.2"/><path d="M18 12v6"/><path d="M15 15h6"/></svg>添加联系人</div>
-          <div class="row" style="gap:8px">
-            <input id="newFriend" placeholder="添加好友用户名" />
-            <button id="btn-add" class="btn"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.5" cy="8" r="3"/><path d="M4.2 18.5c.9-2.8 2.9-4.2 5.3-4.2s4.4 1.4 5.3 4.2"/><path d="M18 12v6"/><path d="M15 15h6"/></svg>添加</button>
+        <div class="panel">
+          <h1 class="page-title">联系人</h1>
+          
+          <div class="add-friend-card">
+            <input id="newFriend" placeholder="输入用户名添加好友" />
+            <button id="btn-add" class="btn btn-primary btn-sm">添加</button>
           </div>
-        </div>
 
-        <div class="panel pad">
-          <div class="title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.8 19c.9-2.9 2.7-4.3 5.2-4.3 2.4 0 4.3 1.4 5.2 4.3"/><circle cx="16.8" cy="9.5" r="2.3"/><path d="M16.2 14.9c1.7.2 3.2 1.2 4 2.9"/></svg>联系人</div>
+          <div class="section-title">好友列表</div>
           <div id="friendsList" class="list"></div>
         </div>
       </section>
 
       <!-- 我 tab -->
       <section id="tab-me" class="tab view">
-        <div class="panel pad">
-          <div class="title"></div>
-          <div class="profile-row">
-            <div id="meAvatarWrap" class="avatar-wrap"></div>
-            <div style="flex:1">
-              <input id="avatarInput" placeholder="头像外链 (示例: https://...)" />
-              <div class="row" style="margin-top:8px">
-                <button id="btnUploadAvatar" class="btn">上传图片</button>
-                <button id="btnSaveAvatar" class="btn">保存头像</button>
+        <div class="panel">
+          <h1 class="page-title">设置</h1>
+          
+          <div class="settings-card">
+            <div class="profile-row">
+              <div id="meAvatarWrap" class="avatar-wrap large"></div>
+              <div class="profile-info">
+                <input id="avatarInput" placeholder="填入头像URL或上传" />
+                <div class="action-row">
+                  <button id="btnUploadAvatar" class="btn btn-secondary btn-sm">上传</button>
+                  <button id="btnSaveAvatar" class="btn btn-primary btn-sm">保存</button>
+                </div>
               </div>
-            </div><div><a href="https://wallpaperscraft.com/catalog/anime" target="_blank">图库1</a>
-            <br><a href="https://anime-pictures.net/" target="_blank">图库2</a>
+            </div>
+            <input type="file" id="avatarUpload" accept="image/*" style="display:none" />
+          </div>
+
+          <div class="settings-card">
+            <div class="flex-between">
+              <div>
+                <div class="setting-title">系统通知</div>
+                <div id="notifyStatus" class="small muted">检测中...</div>
+              </div>
+              <button id="btnNotifyToggle" class="btn btn-secondary btn-sm">开启</button>
             </div>
           </div>
-          <input type="file" id="avatarUpload" accept="image/*" style="display:none" />
-        </div>
 
-        <div class="panel pad">
-          <div class="title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>消息通知</div>
-          <div class="profile-row">
-            <div style="flex:1">
-              <div id="notifyStatus" class="small muted">检测中...</div>
-            </div>
-            <button id="btnNotifyToggle" class="btn small">开启通知</button>
+          <div class="settings-card">
+            <div class="setting-title">开发者说明</div>
+            <textarea id="meNote" readonly rows="3">冷少的世界</textarea>
           </div>
-        </div>
-
-        <div class="panel pad">
-          <div class="title"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5l1.7 3.8 3.8 1.7-3.8 1.7L12 15.5l-1.7-3.8-3.8-1.7 3.8-1.7L12 4.5z"/></svg>开发者说明</div>
-          <textarea id="meNote" readonly rows="6">
-          冷少的世界
-          </textarea>
         </div>
       </section>
     </main>
 
     <nav class="bottom-nav">
       <button class="nav-btn active" data-target="tab-messages" id="nav-msg">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4 3v-3H6.5A2.5 2.5 0 0 1 4 14.5v-8z"/><circle cx="9" cy="10.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12.5" cy="10.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="16" cy="10.5" r="0.9" fill="currentColor" stroke="none"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <span class="nav-badge" id="navMsgBadge"></span>
         <span>消息</span>
       </button>
       <button class="nav-btn" data-target="tab-contacts" id="nav-contacts">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.8 19c.9-2.9 2.7-4.3 5.2-4.3 2.4 0 4.3 1.4 5.2 4.3"/><circle cx="16.8" cy="9.5" r="2.3"/><path d="M16.2 14.9c1.7.2 3.2 1.2 4 2.9"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         <span>联系人</span>
       </button>
       <button class="nav-btn" data-target="tab-me" id="nav-me">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.2" r="3.5"/><path d="M5.2 19.5c1.2-3.4 3.6-5 6.8-5s5.6 1.6 6.8 5"/></svg>
-        <span>我</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>设置</span>
       </button>
     </nav>
   </div>
+  
   <script src="./supabase.min.js"></script>
   <script src="./config.js"></script>
   <script src="./app.js"></script>
 
-  </body>
-  </html>
+</body>
+</html>

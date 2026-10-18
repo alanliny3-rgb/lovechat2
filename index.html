@@ -110,13 +110,15 @@
             </div>
           </div>
 
+          <!-- 头像 -->
           <div class="settings-card">
+            <div class="setting-title">头像</div>
             <div class="profile-row">
               <div id="meAvatarWrap" class="avatar-wrap large"></div>
               <div class="profile-info">
                 <input id="avatarInput" placeholder="头像外链 (示例: https://...)" />
                 <div class="action-row">
-                  <button id="btnUploadAvatar" class="btn btn-secondary btn-sm">上传图片</button>
+                  <a id="btnUploadAvatar" href="javascript:void(0)" class="link-btn">选择头像</a>
                   <button id="btnSaveAvatar" class="btn btn-primary btn-sm">保存头像</button>
                 </div>
               </div>
@@ -128,6 +130,7 @@
             <input type="file" id="avatarUpload" accept="image/*" style="display:none" />
           </div>
 
+          <!-- 系统通知 -->
           <div class="settings-card">
             <div class="flex-between">
               <div>
@@ -138,9 +141,10 @@
             </div>
           </div>
 
+          <!-- 主页面背景图 -->
           <div class="settings-card">
-            <div class="setting-title">页面背景图</div>
-            <p class="small muted">设置后作为整个页面背景，仅保存在本机浏览器，不会上传</p>
+            <div class="setting-title">主页面背景图</div>
+            <p class="small muted">仅应用于主页面框架（不含登录页和网页四周），保存在本机浏览器，不会上传</p>
             <input id="bgInput" placeholder="粘贴图片外链，或点击右侧选择本地图片" />
             <div class="action-row" style="margin-top:12px">
               <button id="btnChooseBg" class="btn btn-secondary btn-sm">选择图片</button>
@@ -151,6 +155,7 @@
             <div id="bgStatus" class="small muted" style="margin-top:8px"></div>
           </div>
 
+          <!-- 开发者说明 -->
           <div class="settings-card">
             <div class="setting-title">开发者说明</div>
             <textarea id="meNote" readonly rows="3">冷少的世界</textarea>

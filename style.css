@@ -129,7 +129,7 @@ input:focus, textarea:focus { border-color: var(--accent); }
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
-  background: transparent;
+  background: var(--bg);
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
 }
@@ -260,6 +260,26 @@ input:focus, textarea:focus { border-color: var(--accent); }
   white-space: nowrap;
 }
 .msg-right .msg-time { left: auto; right: 0; }
+
+/* 复制按钮：悬浮在气泡上方外侧，hover 显示；不占文档流，气泡与头像保持同排对齐 */
+.msg-copy-btn {
+  position: absolute;
+  top: -9px;
+  opacity: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); padding: 0;
+  transition: opacity 0.15s;
+  z-index: 2;
+}
+.msg-right .msg-copy-btn { right: 0; }
+.msg-left .msg-copy-btn { left: 0; }
+.msg-col:hover .msg-copy-btn { opacity: 1; }
+.msg-copy-btn:hover { background: var(--surface-hover); color: var(--text-main); }
 .msg-date-sep { text-align: center; font-size: 12px; color: #a1a1a6; margin: 24px 0 8px; font-weight: 500; }
 .msg-empty-hint { text-align: center; color: #a1a1a6; font-size: 14px; margin-top: 30vh; }
 
@@ -320,6 +340,15 @@ input:focus, textarea:focus { border-color: var(--accent); }
 .gallery-links { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
 .gallery-links a { font-size: 13px; font-weight: 500; color: var(--accent); text-decoration: none; }
 .gallery-links a:hover { text-decoration: underline; }
+
+/* 超链接样式的操作入口（选择头像） */
+.link-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 500; color: var(--accent);
+  background: transparent; border: none; padding: 8px 4px;
+  cursor: pointer; text-decoration: none;
+}
+.link-btn:hover { text-decoration: underline; }
 .add-friend-card { display: flex; gap: 8px; margin-bottom: 12px; }
 .add-friend-card input { flex: 1; min-width: 0; }
 .add-friend-card .btn { flex-shrink: 0; white-space: nowrap; }
@@ -396,12 +425,14 @@ input:focus, textarea:focus { border-color: var(--accent); }
 .notify-prompt-actions { display: flex; gap: 10px; }
 .notify-prompt-actions .btn { flex: 1; }
 
-/* ================= 页面背景图（本地设置） ================= */
-body.has-page-bg { background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; }
-body.has-page-bg .app,
-body.has-page-bg .chat-panel-full {
-  background: rgba(255,255,255,0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* ================= 主页面背景图（仅应用于主页面框架，本地保存） ================= */
+body.has-page-bg .app {
+  background-color: rgba(255, 255, 255, 0.55);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
-body.has-page-bg .chat-window { background: rgba(247,247,249,0.78); }
+body.has-page-bg .chat-panel-full { background: transparent; }
+body.has-page-bg .chat-window { background-color: rgba(247, 247, 249, 0.5); }
+body.has-page-bg .composer { background: rgba(255, 255, 255, 0.55); }

@@ -1038,6 +1038,14 @@
       .catch(()=>toast('保存头像失败', 'error'));
   });
 
+  // 输入外链时实时预览头像（未保存不落库）
+  if (avatarInput) avatarInput.addEventListener('input', () => {
+    if (!meAvatarWrap || !currentUser) return;
+    const v = avatarInput.value.trim();
+    meAvatarWrap.innerHTML = '';
+    meAvatarWrap.appendChild(makeAvatarDOM(currentUser, v || myAvatar, 52));
+  });
+
   const avatarUpload = document.getElementById('avatarUpload');
   const btnUploadAvatar = document.getElementById('btnUploadAvatar');
   if (btnUploadAvatar && avatarUpload) btnUploadAvatar.addEventListener('click', () => avatarUpload.click());
@@ -1078,13 +1086,10 @@
   function applyPageBg(url) {
     const has = !!(url && String(url).trim());
     document.body.classList.toggle('has-page-bg', has);
-    if (has) {
-      const safe = String(url).replace(/["'\\]/g, '');
-      document.body.style.backgroundImage = 'url("' + safe + '")';
-    } else {
-      document.body.style.backgroundImage = '';
+    if (app) {
+      app.style.backgroundImage = has ? 'url("' + String(url).replace(/"/g, '%22').replace(/\\/g, '%5C') + '")' : '';
     }
-    if (bgStatus) bgStatus.textContent = has ? '已应用页面背景（仅保存在本机）' : '未设置背景图';
+    if (bgStatus) bgStatus.textContent = has ? '已应用主页面背景（仅保存在本机）' : '未设置背景图';
   }
   function savePageBg(url) {
     try {
